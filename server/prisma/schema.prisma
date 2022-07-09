@@ -1,0 +1,152 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// models
+model User {
+  id                 Int              @id @default(autoincrement())
+  username           String           @unique
+  email              String           @unique
+  password           String
+  createdAt          DateTime         @default(now())
+  image              String?
+  bio                String?
+  LFCredits          Int              @default(0)
+  isAdmin            Boolean          @default(false)
+  isConfirmed        Boolean          @default(false)
+  subscriptionPlanId Int
+  notebooks          Notebook[]
+  subscriptionPlan   SubscriptionPlan @relation(fields: [subscriptionPlanId], references: [id])
+  stars              Star[]
+  quiz               Quiz[]
+  notifications      Notification[]
+}
+
+model Notebook {
+  id          Int        @id @default(autoincrement())
+  title       String     @db.VarChar(64)
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  isPublic    Boolean    @default(true)
+  isPinned    Boolean    @default(false)
+  creator     User       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId   Int
+  wordLists   WordList[]
+  stars       Star[]
+}
+
+model WordList {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(64)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isPinned    Boolean  @default(false)
+  notebook    Notebook @relation(references: [id], fields: [notebookId], onDelete: Cascade)
+  notebookId  Int
+  quizId      Int
+  quiz        Quiz[]
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  status    Status
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Word {
+  id           Int          @id @default(autoincrement())
+  wordOrPhrase String       @db.VarChar(128)
+  definitions  Definition[]
+}
+
+model Definition {
+  id                  Int                  @id @default(autoincrement())
+  imageUrl            String?
+  meaning             String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  word                Word                 @relation(references: [id], fields: [wordId])
+  wordId              Int
+  pronunciationAudios PronunciationAudio[]
+}
+
+model PronunciationAudio {
+  id           Int         @id @default(autoincrement())
+  src          String
+  accent       String?
+  definition   Definition? @relation(fields: [definitionId], references: [id])
+  definitionId Int
+}
+
+model Star {
+  user       User     @relation(references: [id], fields: [userId])
+  userId     Int
+  notebook   Notebook @relation(references: [id], fields: [notebookId])
+  notebookId Int
+
+  @@id([userId, notebookId])
+}
+
+model SubscriptionPlan {
+  id    Int    @id @default(autoincrement())
+  plan  Plan   @default(Elementary)
+  users User[]
+}
+
+model Quiz {
+  id                       Int        @id @default(autoincrement())
+  takenAt                  DateTime   @default(now())
+  user                     User       @relation(references: [id], fields: [userId])
+  userId                   Int
+  wordList                 WordList   @relation(fields: [wordListId], references: [id])
+  wordListId               Int
+  questions                Question[]
+  numberOfQuestionsCorrect Int
+}
+
+model Question {
+  id            Int      @id @default(autoincrement())
+  title         String
+  quizId        Int
+  quiz          Quiz     @relation(references: [id], fields: [quizId])
+  userChoice    String
+  correctChoice String
+  choices       Choice[]
+}
+
+model Choice {
+  id         Int      @id @default(autoincrement())
+  title      String
+  question   Question @relation(references: [id], fields: [questionId])
+  questionId Int
+}
+
+model Notification {
+  id   Int  @id @default(autoincrement())
+  to   User @relation(fields: [toId], references: [id])
+  toId Int
+}
+
+// enums
+enum Plan {
+  Elementary
+  Intermediate
+  Advanced
+  Expert
+}
+
+enum Status {
+  warning
+  info
+}
