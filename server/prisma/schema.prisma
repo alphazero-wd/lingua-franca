@@ -11,22 +11,21 @@ datasource db {
 
 // models
 model User {
-  id                 Int              @id @default(autoincrement())
-  username           String           @unique
-  email              String           @unique
-  password           String
-  createdAt          DateTime         @default(now())
-  image              String?
-  bio                String?
-  LFCredits          Int              @default(0)
-  isAdmin            Boolean          @default(false)
-  isConfirmed        Boolean          @default(false)
-  subscriptionPlanId Int
-  notebooks          Notebook[]
-  subscriptionPlan   SubscriptionPlan @relation(fields: [subscriptionPlanId], references: [id])
-  stars              Star[]
-  quiz               Quiz[]
-  notifications      Notification[]
+  id            Int               @id @default(autoincrement())
+  username      String            @unique
+  email         String            @unique
+  password      String
+  createdAt     DateTime          @default(now())
+  image         String?
+  bio           String?
+  LFCredits     Int               @default(0)
+  isAdmin       Boolean           @default(false)
+  isConfirmed   Boolean           @default(false)
+  notebooks     Notebook[]
+  stars         Star[]
+  quiz          Quiz[]
+  notifications Notification[]
+  currentPlan   PurchaseHistory[]
 }
 
 model Notebook {
@@ -76,7 +75,7 @@ model Definition {
   meaning             String
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
-  word                Word                 @relation(references: [id], fields: [wordId])
+  word                Word                 @relation(references: [id], fields: [wordId], onDelete: Cascade)
   wordId              Int
   pronunciationAudios PronunciationAudio[]
 }
@@ -85,31 +84,47 @@ model PronunciationAudio {
   id           Int         @id @default(autoincrement())
   src          String
   accent       String?
-  definition   Definition? @relation(fields: [definitionId], references: [id])
+  definition   Definition? @relation(fields: [definitionId], references: [id], onDelete: Cascade)
   definitionId Int
 }
 
 model Star {
-  user       User     @relation(references: [id], fields: [userId])
+  user       User     @relation(references: [id], fields: [userId], onDelete: Cascade)
   userId     Int
-  notebook   Notebook @relation(references: [id], fields: [notebookId])
+  notebook   Notebook @relation(references: [id], fields: [notebookId], onDelete: Cascade)
   notebookId Int
 
   @@id([userId, notebookId])
 }
 
 model SubscriptionPlan {
-  id    Int    @id @default(autoincrement())
-  plan  Plan   @default(Elementary)
-  users User[]
+  plan     Plan      @unique
+  price    Float
+  features Feature[]
+}
+
+// users' subscription plans
+model PurchaseHistory {
+  id          Int      @id @default(autoincrement())
+  plan        Plan     @default(Elementary)
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     Int
+  purchasedAt DateTime @default(now())
+}
+
+model Feature {
+  id       Int              @id @default(autoincrement())
+  feature  String
+  plan     SubscriptionPlan @relation(fields: [planEnum], references: [plan], onDelete: Cascade)
+  planEnum Plan
 }
 
 model Quiz {
   id                       Int        @id @default(autoincrement())
   takenAt                  DateTime   @default(now())
-  user                     User       @relation(references: [id], fields: [userId])
+  user                     User       @relation(references: [id], fields: [userId], onDelete: Cascade)
   userId                   Int
-  wordList                 WordList   @relation(fields: [wordListId], references: [id])
+  wordList                 WordList   @relation(fields: [wordListId], references: [id], onDelete: Cascade)
   wordListId               Int
   questions                Question[]
   numberOfQuestionsCorrect Int
@@ -119,7 +134,7 @@ model Question {
   id            Int      @id @default(autoincrement())
   title         String
   quizId        Int
-  quiz          Quiz     @relation(references: [id], fields: [quizId])
+  quiz          Quiz     @relation(references: [id], fields: [quizId], onDelete: Cascade)
   userChoice    String
   correctChoice String
   choices       Choice[]
@@ -128,13 +143,13 @@ model Question {
 model Choice {
   id         Int      @id @default(autoincrement())
   title      String
-  question   Question @relation(references: [id], fields: [questionId])
+  question   Question @relation(references: [id], fields: [questionId], onDelete: Cascade)
   questionId Int
 }
 
 model Notification {
   id   Int  @id @default(autoincrement())
-  to   User @relation(fields: [toId], references: [id])
+  to   User @relation(fields: [toId], references: [id], onDelete: Cascade)
   toId Int
 }
 
