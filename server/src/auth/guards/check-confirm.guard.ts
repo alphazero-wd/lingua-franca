@@ -13,6 +13,6 @@ export class CheckConfirmGuard implements CanActivate {
     const user = req.user;
     if (!user.isConfirmed)
       throw new ForbiddenException('You have not confirmed your account.');
-    return false;
+    return true;
   }
 }

@@ -2,7 +2,7 @@
 CREATE TYPE "Plan" AS ENUM ('ELEMENTARY', 'INTERMEDIATE', 'ADVANCED', 'EXPERT');
 
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('warning', 'info');
+CREATE TYPE "Status" AS ENUM ('WARNINg', 'INFO');
 
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
@@ -74,10 +74,11 @@ CREATE TABLE "Word" (
 CREATE TABLE "Definition" (
     "id" SERIAL NOT NULL,
     "imageUrl" TEXT,
-    "meaning" TEXT NOT NULL,
+    "meaning" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "wordId" INTEGER NOT NULL,
+    "note" TEXT,
 
     CONSTRAINT "Definition_pkey" PRIMARY KEY ("id")
 );

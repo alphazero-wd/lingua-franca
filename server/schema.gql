@@ -3,7 +3,8 @@
 # ------------------------------------------------------
 
 type AuthResponse {
-  access_token: String!
+  message: String!
+  token: String
 }
 
 type UserResponse {
@@ -33,6 +34,7 @@ type Query {
 type Mutation {
   signup(signupDto: SignupDto!): AuthResponse!
   login(loginDto: LoginDto!): AuthResponse!
+  confirmUser: AuthResponse!
 }
 
 input SignupDto {

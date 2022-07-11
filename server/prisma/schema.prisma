@@ -72,12 +72,13 @@ model Word {
 model Definition {
   id                  Int                  @id @default(autoincrement())
   imageUrl            String?
-  meaning             String
+  meaning             String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   word                Word                 @relation(references: [id], fields: [wordId], onDelete: Cascade)
   wordId              Int
   pronunciationAudios PronunciationAudio[]
+  note                String?
 }
 
 model PronunciationAudio {
@@ -154,8 +155,8 @@ enum Plan {
 }
 
 enum Status {
-  warning
-  info
+  WARNINg
+  INFO
 }
 
 enum Role {

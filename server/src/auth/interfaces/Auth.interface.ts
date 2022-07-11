@@ -3,5 +3,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class AuthResponse {
   @Field()
-  access_token: string;
+  message: string;
+
+  @Field({ nullable: true })
+  token?: string;
 }
