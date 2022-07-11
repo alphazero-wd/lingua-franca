@@ -1,8 +1,11 @@
 -- CreateEnum
-CREATE TYPE "Plan" AS ENUM ('Elementary', 'Intermediate', 'Advanced', 'Expert');
+CREATE TYPE "Plan" AS ENUM ('ELEMENTARY', 'INTERMEDIATE', 'ADVANCED', 'EXPERT');
 
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('warning', 'info');
+
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -13,9 +16,9 @@ CREATE TABLE "User" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "image" TEXT,
     "bio" TEXT,
-    "LFCredits" INTEGER NOT NULL DEFAULT 0,
-    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
     "isConfirmed" BOOLEAN NOT NULL DEFAULT false,
+    "subscriptionPlanId" "Plan",
+    "role" "Role" NOT NULL DEFAULT 'USER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -100,17 +103,9 @@ CREATE TABLE "Star" (
 -- CreateTable
 CREATE TABLE "SubscriptionPlan" (
     "plan" "Plan" NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL
-);
+    "price" DOUBLE PRECISION NOT NULL,
 
--- CreateTable
-CREATE TABLE "PurchaseHistory" (
-    "id" SERIAL NOT NULL,
-    "plan" "Plan" NOT NULL DEFAULT 'Elementary',
-    "ownerId" INTEGER NOT NULL,
-    "purchasedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "PurchaseHistory_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "SubscriptionPlan_pkey" PRIMARY KEY ("plan")
 );
 
 -- CreateTable
@@ -171,6 +166,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "SubscriptionPlan_plan_key" ON "SubscriptionPlan"("plan");
 
 -- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_subscriptionPlanId_fkey" FOREIGN KEY ("subscriptionPlanId") REFERENCES "SubscriptionPlan"("plan") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Notebook" ADD CONSTRAINT "Notebook_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -187,9 +185,6 @@ ALTER TABLE "Star" ADD CONSTRAINT "Star_userId_fkey" FOREIGN KEY ("userId") REFE
 
 -- AddForeignKey
 ALTER TABLE "Star" ADD CONSTRAINT "Star_notebookId_fkey" FOREIGN KEY ("notebookId") REFERENCES "Notebook"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PurchaseHistory" ADD CONSTRAINT "PurchaseHistory_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Feature" ADD CONSTRAINT "Feature_planEnum_fkey" FOREIGN KEY ("planEnum") REFERENCES "SubscriptionPlan"("plan") ON DELETE CASCADE ON UPDATE CASCADE;

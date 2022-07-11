@@ -11,21 +11,21 @@ datasource db {
 
 // models
 model User {
-  id            Int               @id @default(autoincrement())
-  username      String            @unique
-  email         String            @unique
-  password      String
-  createdAt     DateTime          @default(now())
-  image         String?
-  bio           String?
-  LFCredits     Int               @default(0)
-  isAdmin       Boolean           @default(false)
-  isConfirmed   Boolean           @default(false)
-  notebooks     Notebook[]
-  stars         Star[]
-  quiz          Quiz[]
-  notifications Notification[]
-  currentPlan   PurchaseHistory[]
+  id                 Int               @id @default(autoincrement())
+  username           String            @unique
+  email              String            @unique
+  password           String
+  createdAt          DateTime          @default(now())
+  image              String?
+  bio                String?
+  isConfirmed        Boolean           @default(false)
+  notebooks          Notebook[]
+  stars              Star[]
+  quiz               Quiz[]
+  notifications      Notification[]
+  subscriptionPlanId Plan?
+  subscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [plan])
+  role               Role              @default(USER)
 }
 
 model Notebook {
@@ -98,18 +98,10 @@ model Star {
 }
 
 model SubscriptionPlan {
-  plan     Plan      @unique
+  plan     Plan      @id @unique
   price    Float
   features Feature[]
-}
-
-// users' subscription plans
-model PurchaseHistory {
-  id          Int      @id @default(autoincrement())
-  plan        Plan     @default(Elementary)
-  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId     Int
-  purchasedAt DateTime @default(now())
+  user     User[]
 }
 
 model Feature {
@@ -155,13 +147,18 @@ model Notification {
 
 // enums
 enum Plan {
-  Elementary
-  Intermediate
-  Advanced
-  Expert
+  ELEMENTARY
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
 }
 
 enum Status {
   warning
   info
+}
+
+enum Role {
+  USER
+  ADMIN
 }
