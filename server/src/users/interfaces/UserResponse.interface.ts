@@ -14,7 +14,7 @@ export class UserResponse implements User {
   email: string;
 
   @Field({ middleware: [checkRoleMiddleware] })
-  @Extensions({ role: Role.ADMIN })
+  @Extensions({ role: Role.Admin })
   password: string;
 
   @Field({ nullable: true })
@@ -33,5 +33,5 @@ export class UserResponse implements User {
   role: Role;
 
   @Field()
-  subscriptionPlanId: Plan;
+  planEnum: Plan;
 }

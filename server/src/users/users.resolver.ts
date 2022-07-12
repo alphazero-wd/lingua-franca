@@ -18,7 +18,7 @@ export class UsersResolver {
   }
 
   @Query(() => [UserResponse])
-  @Role('ADMIN')
+  @Role('Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   users(): Promise<User[]> {
     return this.usersService.getUsers();

@@ -1,11 +1,11 @@
 -- CreateEnum
-CREATE TYPE "Plan" AS ENUM ('ELEMENTARY', 'INTERMEDIATE', 'ADVANCED', 'EXPERT');
+CREATE TYPE "Plan" AS ENUM ('Elementary', 'Intermediate', 'Advanced', 'Expert');
 
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('WARNINg', 'INFO');
+CREATE TYPE "Status" AS ENUM ('Warning', 'Info');
 
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "Role" AS ENUM ('User', 'Admin');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -17,8 +17,8 @@ CREATE TABLE "User" (
     "image" TEXT,
     "bio" TEXT,
     "isConfirmed" BOOLEAN NOT NULL DEFAULT false,
-    "subscriptionPlanId" "Plan",
-    "role" "Role" NOT NULL DEFAULT 'USER',
+    "planEnum" "Plan",
+    "role" "Role" NOT NULL DEFAULT 'User',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -167,7 +167,7 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "SubscriptionPlan_plan_key" ON "SubscriptionPlan"("plan");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_subscriptionPlanId_fkey" FOREIGN KEY ("subscriptionPlanId") REFERENCES "SubscriptionPlan"("plan") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_planEnum_fkey" FOREIGN KEY ("planEnum") REFERENCES "SubscriptionPlan"("plan") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Notebook" ADD CONSTRAINT "Notebook_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

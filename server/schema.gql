@@ -17,7 +17,7 @@ type UserResponse {
   createdAt: DateTime!
   isConfirmed: Boolean!
   role: String!
-  subscriptionPlanId: String!
+  planEnum: String!
 }
 
 """

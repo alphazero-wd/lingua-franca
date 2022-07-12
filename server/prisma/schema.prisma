@@ -11,21 +11,21 @@ datasource db {
 
 // models
 model User {
-  id                 Int               @id @default(autoincrement())
-  username           String            @unique
-  email              String            @unique
-  password           String
-  createdAt          DateTime          @default(now())
-  image              String?
-  bio                String?
-  isConfirmed        Boolean           @default(false)
-  notebooks          Notebook[]
-  stars              Star[]
-  quiz               Quiz[]
-  notifications      Notification[]
-  subscriptionPlanId Plan?
-  subscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [plan])
-  role               Role              @default(USER)
+  id            Int               @id @default(autoincrement())
+  username      String            @unique
+  email         String            @unique
+  password      String
+  createdAt     DateTime          @default(now())
+  image         String?
+  bio           String?
+  isConfirmed   Boolean           @default(false)
+  notebooks     Notebook[]
+  stars         Star[]
+  quiz          Quiz[]
+  notifications Notification[]
+  planEnum      Plan?
+  plan          SubscriptionPlan? @relation(fields: [planEnum], references: [plan])
+  role          Role              @default(User)
 }
 
 model Notebook {
@@ -148,18 +148,18 @@ model Notification {
 
 // enums
 enum Plan {
-  ELEMENTARY
-  INTERMEDIATE
-  ADVANCED
-  EXPERT
+  Elementary
+  Intermediate
+  Advanced
+  Expert
 }
 
 enum Status {
-  WARNINg
-  INFO
+  Warning
+  Info
 }
 
 enum Role {
-  USER
-  ADMIN
+  User
+  Admin
 }

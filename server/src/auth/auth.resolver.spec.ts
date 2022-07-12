@@ -1,57 +1,16 @@
-import {
-  MailerService,
-  MAILER_OPTIONS,
-  MailerModule,
-} from '@nestjs-modules/mailer';
-import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
-
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { ForbiddenException } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { User } from '@prisma/client';
-import { join } from 'path';
-import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
+import { AppModule } from '../app.module';
 
-const moduleMocker = new ModuleMocker(global);
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
   let prisma: PrismaService;
   let service: AuthService;
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthResolver,
-        AuthService,
-        PrismaService,
-        JwtService,
-        ConfigService,
-        MailService,
-        MailerService,
-        {
-          name: MAILER_OPTIONS,
-          provide: MAILER_OPTIONS,
-          useFactory: async (config: ConfigService) => ({
-            transport: config.get('MAIL_TRANSPORT'),
-            defaults: {
-              from: `"No Reply" <${config.get('MAIL_FROM')}>`,
-            },
-            template: {
-              dir: join(__dirname, '../mail/templates'),
-              adapter: new HandlebarsAdapter(),
-              options: {
-                strict: true,
-              },
-            },
-          }),
-          inject: [ConfigService],
-        },
-      ],
-      imports: [ConfigModule, MailerModule],
+      imports: [AppModule],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
