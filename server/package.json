@@ -23,12 +23,14 @@
     "test:e2e": "dotenv -e .env.test -- jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.7.1",
     "@nestjs/apollo": "^10.0.17",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/graphql": "^10.0.18",
     "@nestjs/jwt": "^9.0.0",
+    "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@prisma/client": "^4.0.0",
@@ -38,6 +40,8 @@
     "class-validator": "^0.13.2",
     "dotenv-cli": "^6.0.0",
     "graphql": "15.3.0",
+    "handlebars": "^4.7.7",
+    "nodemailer": "^6.7.7",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",

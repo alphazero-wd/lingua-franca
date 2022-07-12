@@ -1,0 +1,49 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponse {
+  message: String!
+  token: String
+}
+
+type UserResponse {
+  id: ID!
+  username: String!
+  email: String!
+  password: String!
+  bio: String
+  image: String
+  createdAt: DateTime!
+  isConfirmed: Boolean!
+  role: String!
+  planEnum: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  hello: String!
+  me: UserResponse!
+  users: [UserResponse!]!
+}
+
+type Mutation {
+  signup(signupDto: SignupDto!): AuthResponse!
+  login(loginDto: LoginDto!): AuthResponse!
+  confirmUser: AuthResponse!
+}
+
+input SignupDto {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input LoginDto {
+  email: String!
+  password: String!
+}

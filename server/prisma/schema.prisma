@@ -18,14 +18,14 @@ model User {
   createdAt     DateTime          @default(now())
   image         String?
   bio           String?
-  LFCredits     Int               @default(0)
-  isAdmin       Boolean           @default(false)
   isConfirmed   Boolean           @default(false)
   notebooks     Notebook[]
   stars         Star[]
   quiz          Quiz[]
   notifications Notification[]
-  currentPlan   PurchaseHistory[]
+  planEnum      Plan?
+  plan          SubscriptionPlan? @relation(fields: [planEnum], references: [plan])
+  role          Role              @default(User)
 }
 
 model Notebook {
@@ -72,12 +72,13 @@ model Word {
 model Definition {
   id                  Int                  @id @default(autoincrement())
   imageUrl            String?
-  meaning             String
+  meaning             String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   word                Word                 @relation(references: [id], fields: [wordId], onDelete: Cascade)
   wordId              Int
   pronunciationAudios PronunciationAudio[]
+  note                String?
 }
 
 model PronunciationAudio {
@@ -98,18 +99,10 @@ model Star {
 }
 
 model SubscriptionPlan {
-  plan     Plan      @unique
+  plan     Plan      @id @unique
   price    Float
   features Feature[]
-}
-
-// users' subscription plans
-model PurchaseHistory {
-  id          Int      @id @default(autoincrement())
-  plan        Plan     @default(Elementary)
-  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId     Int
-  purchasedAt DateTime @default(now())
+  user     User[]
 }
 
 model Feature {
@@ -162,6 +155,11 @@ enum Plan {
 }
 
 enum Status {
-  warning
-  info
+  Warning
+  Info
+}
+
+enum Role {
+  User
+  Admin
 }
